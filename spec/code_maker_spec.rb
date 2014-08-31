@@ -15,4 +15,10 @@ describe CodeMaker do
     expect(code.is_a?(String)).to eq(true)
     expect(code.length).to eq(4)
   end
+
+  it 'should generate code with legal colors' do
+    code = CodeMaker.new.code
+
+    expect(code.chars - ['r', 'g', 'b', 'y']).to be_empty
+  end
 end
