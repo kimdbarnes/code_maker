@@ -2,11 +2,11 @@ require 'code_maker'
 
 describe CodeMaker do
   it 'should be' do
-    CodeMaker.new.should be
+    expect(CodeMaker.new).to be
   end
 
   it 'should allow me to set the code for testing' do
-    CodeMaker.new('rrrr').code.should == 'rrrr'
+    expect(CodeMaker.new('rrrr').code).to eq 'rrrr'
   end
 
   it 'should have a code of 4 colors' do
