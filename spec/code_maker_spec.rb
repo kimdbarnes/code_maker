@@ -21,4 +21,12 @@ describe CodeMaker do
 
     expect(code.chars - ['r', 'g', 'b', 'y']).to be_empty
   end
+
+  it 'should seem to generate a random code' do
+    lots_of_codes = (1..100).collect do
+      CodeMaker.new.code
+    end
+
+    lots_of_codes.uniq.length.should >= 80
+  end
 end
