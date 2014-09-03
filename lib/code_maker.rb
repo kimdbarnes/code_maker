@@ -8,7 +8,7 @@ class CodeMaker
   end
 
   def correct?(guess)
-    guess.downcase == code
+    Score.new(code, guess).correct?
   end
 
   def score(guess)
@@ -28,7 +28,11 @@ class CodeMaker
     end
 
     def evaluate
-      [correct_colors_and_locations_count, correct_colors_incorrect_locations_count]
+      [correct_colors_and_locations_count, correct_colors_but_incorrect_locations_count]
+    end
+
+    def correct?
+      guess.downcase == code
     end
 
     private
@@ -36,24 +40,23 @@ class CodeMaker
     attr_reader :code, :guess
 
     def correct_colors_and_locations_count
-      CODE_LENGTH - non_exact_matches.count
+      exact_matches.count
     end
 
-    def non_exact_matches
-      code.chars.zip(guess.downcase.chars).select { |a, b| a !=b }
+    def correct_colors_but_incorrect_locations_count
+      return 0 if correct?
+
+      remaining_code, remaining_guess = parse_non_exact_matches
+
+      remaining_guess.chars.count { |char| remaining_code.sub!(char, '') }
     end
 
-    def correct_colors_incorrect_locations_count
-      return 0 if correct_colors_and_locations_count == CODE_LENGTH
+    def parse_non_exact_matches
+      code.chars.zip(guess.downcase.chars).select { |a, b| a !=b }.transpose.map(&:join)
+    end
 
-      (remaining_code, remaining_guess) = non_exact_matches.transpose
-      remaining_code = remaining_code.join('')
-
-      remaining_guess.count do |guess_char|
-        match = remaining_code.include? guess_char
-        remaining_code = remaining_code.sub(guess_char, '')
-        match
-      end
+    def exact_matches
+      code.chars.zip(guess.downcase.chars).select { |a, b| a ==b }
     end
   end
 end
