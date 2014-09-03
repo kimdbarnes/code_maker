@@ -18,10 +18,7 @@ class CodeMaker
   private
 
   def generate_code
-    colors = ['r', 'g', 'y', 'b']
-    (1..CODE_LENGTH).reduce('') do |result, _|
-      result + colors.sample
-    end
+    (1..CODE_LENGTH).map { ['r', 'g', 'y', 'b'].sample }.join
   end
 
   class Score
@@ -31,14 +28,14 @@ class CodeMaker
     end
 
     def evaluate
-      [correct_locations_count, correct_colors_count]
+      [correct_colors_and_locations_count, correct_colors_incorrect_locations_count]
     end
 
     private
 
     attr_reader :code, :guess
 
-    def correct_locations_count
+    def correct_colors_and_locations_count
       CODE_LENGTH - non_exact_matches.count
     end
 
@@ -46,8 +43,8 @@ class CodeMaker
       code.chars.zip(guess.downcase.chars).select { |a, b| a !=b }
     end
 
-    def correct_colors_count
-      return 0 if correct_locations_count == CODE_LENGTH
+    def correct_colors_incorrect_locations_count
+      return 0 if correct_colors_and_locations_count == CODE_LENGTH
 
       (remaining_code, remaining_guess) = non_exact_matches.transpose
       remaining_code = remaining_code.join('')
